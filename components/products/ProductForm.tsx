@@ -77,19 +77,19 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
       setLoading(true);
       const url = initialData
         ? `/api/collections/${initialData._id}`
-        : "/api/collections";
+        : "/api/products";
       const res = await fetch(url, {
         method: "POST",
         body: JSON.stringify(values),
       });
       if (res.ok) {
         setLoading(false);
-        toast.success(`Collection ${initialData ? "updated" : "created"}`);
-        window.location.href = "/collections";
-        router.push("/collections");
+        toast.success(`Products ${initialData ? "updated" : "created"}`);
+        window.location.href = "/products";
+        router.push("/products");
       }
     } catch (err) {
-      console.log("[collections_POST]", err);
+      console.log("[products_POST]", err);
       toast.error("Something went wrong! Please try again.");
     }
   };
@@ -98,11 +98,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     <div className="p-10">
       {initialData ? (
         <div className="flex items-center justify-between">
-          <p className="text-heading2-bold">Edit Collection</p>
+          <p className="text-heading2-bold">Edit Product</p>
           <Delete id={initialData._id} />
         </div>
       ) : (
-        <p className="text-heading2-bold">Create Collection</p>
+        <p className="text-heading2-bold">Create Product</p>
       )}
       <Separator className="bg-grey-1 mt-4 mb-7" />
       <Form {...form}>
@@ -144,21 +144,82 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
           />
           <FormField
             control={form.control}
-            name="image"
+            name="media"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Image</FormLabel>
                 <FormControl>
                   <ImageUpload
-                    value={field.value ? [field.value] : []}
-                    onChange={(url) => field.onChange(url)}
-                    onRemove={() => field.onChange("")}
+                    value={field.value}
+                    onChange={(url) => field.onChange([...field.value, url])}
+                    onRemove={(url) =>
+                      field.onChange([
+                        ...field.value.filter((image) => image !== url),
+                      ])
+                    }
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price ($)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="Price"
+                    {...field}
+                    onKeyDown={handleKeyPress}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="expense"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Expense</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="Expense"
+                    {...field}
+                    onKeyDown={handleKeyPress}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Category"
+                    {...field}
+                    onKeyDown={handleKeyPress}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="flex gap-10">
             <Button type="submit" className="bg-blue-1 text-white">
               Submit
