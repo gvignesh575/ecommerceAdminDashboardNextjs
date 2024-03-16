@@ -45,6 +45,7 @@ export const POST = async (req: NextRequest) => {
 };
 
 export const GET = async (req: NextRequest) => {
+  console.log("Called me");
   try {
     await connectToDB();
 
