@@ -23,7 +23,6 @@ import toast from "react-hot-toast";
 import Delete from "../custom ui/Delete";
 import MultiText from "../custom ui/MultiText";
 import MultiSelect from "../custom ui/MultiSelect";
-import Loader from "../custom ui/Loader";
 
 const formSchema = z.object({
   title: z.string().min(2).max(20),
@@ -45,11 +44,13 @@ interface ProductFormProps {
 const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const [collections, setCollections] = useState<CollectionType[]>([]);
 
   const getCollections = async () => {
     try {
+      setLoading(true);
       const res = await fetch("/api/collections", {
         method: "GET",
       });
@@ -57,7 +58,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
       setCollections(data);
       setLoading(false);
     } catch (err) {
-      console.log("[collections_GET]", err);
+      console.log("[Collection_GET]", err);
       toast.error("Something went wrong! Please try again.");
     }
   };
@@ -69,12 +70,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData
-      ? {
-          ...initialData,
-          collections: initialData.collections.map(
-            (collection) => collection._id
-          ),
-        }
+      ? initialData
       : {
           title: "",
           description: "",
@@ -103,7 +99,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     try {
       setLoading(true);
       const url = initialData
-        ? `/api/products/${initialData._id}`
+        ? `/api/collections/${initialData._id}`
         : "/api/products";
       const res = await fetch(url, {
         method: "POST",
@@ -111,7 +107,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
       });
       if (res.ok) {
         setLoading(false);
-        toast.success(`Product ${initialData ? "updated" : "created"}`);
+        toast.success(`Products ${initialData ? "updated" : "created"}`);
         window.location.href = "/products";
         router.push("/products");
       }
@@ -121,14 +117,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     }
   };
 
-  return loading ? (
-    <Loader />
-  ) : (
+  return (
     <div className="p-10">
       {initialData ? (
         <div className="flex items-center justify-between">
           <p className="text-heading2-bold">Edit Product</p>
-          <Delete id={initialData._id} item="product" />
+          <Delete id={initialData._id} />
         </div>
       ) : (
         <p className="text-heading2-bold">Create Product</p>
@@ -149,7 +143,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     onKeyDown={handleKeyPress}
                   />
                 </FormControl>
-                <FormMessage className="text-red-1" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -161,13 +155,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
+                    onKeyDown={handleKeyPress}
                     placeholder="Description"
                     {...field}
                     rows={5}
-                    onKeyDown={handleKeyPress}
                   />
                 </FormControl>
-                <FormMessage className="text-red-1" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -188,7 +182,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     }
                   />
                 </FormControl>
-                <FormMessage className="text-red-1" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -208,16 +202,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="expense"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Expense ($)</FormLabel>
+                  <FormLabel>Expense($)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -226,10 +221,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="category"
@@ -243,10 +239,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="tags"
@@ -265,7 +262,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       }
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -298,58 +295,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 )}
               />
             )}
-            <FormField
-              control={form.control}
-              name="colors"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Colors</FormLabel>
-                  <FormControl>
-                    <MultiText
-                      placeholder="Colors"
-                      value={field.value}
-                      onChange={(color) =>
-                        field.onChange([...field.value, color])
-                      }
-                      onRemove={(colorToRemove) =>
-                        field.onChange([
-                          ...field.value.filter(
-                            (color) => color !== colorToRemove
-                          ),
-                        ])
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-1" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="sizes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sizes</FormLabel>
-                  <FormControl>
-                    <MultiText
-                      placeholder="Sizes"
-                      value={field.value}
-                      onChange={(size) =>
-                        field.onChange([...field.value, size])
-                      }
-                      onRemove={(sizeToRemove) =>
-                        field.onChange([
-                          ...field.value.filter(
-                            (size) => size !== sizeToRemove
-                          ),
-                        ])
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-1" />
-                </FormItem>
-              )}
-            />
           </div>
 
           <div className="flex gap-10">
@@ -358,7 +303,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
             </Button>
             <Button
               type="button"
-              onClick={() => router.push("/products")}
+              onClick={() => router.push("/collections")}
               className="bg-blue-1 text-white"
             >
               Discard
