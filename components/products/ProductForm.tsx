@@ -143,7 +143,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     onKeyDown={handleKeyPress}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-1" />
               </FormItem>
             )}
           />
@@ -161,7 +161,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     rows={5}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-1" />
               </FormItem>
             )}
           />
@@ -182,7 +182,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     }
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-1" />
               </FormItem>
             )}
           />
@@ -202,7 +202,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-1" />
                 </FormItem>
               )}
             />
@@ -221,7 +221,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-1" />
                 </FormItem>
               )}
             />
@@ -239,7 +239,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-1" />
                 </FormItem>
               )}
             />
@@ -262,7 +262,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       }
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-1" />
                 </FormItem>
               )}
             />
@@ -317,7 +317,34 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       }
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-1" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="sizes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sizes</FormLabel>
+                  <FormControl>
+                    <MultiText
+                      placeholder="Sizes"
+                      value={field.value}
+                      onChange={(size) =>
+                        field.onChange([...field.value, size])
+                      }
+                      onRemove={(sizeToRemove) =>
+                        field.onChange([
+                          ...field.value.filter(
+                            (size) => size !== sizeToRemove
+                          ),
+                        ])
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-1" />
                 </FormItem>
               )}
             />

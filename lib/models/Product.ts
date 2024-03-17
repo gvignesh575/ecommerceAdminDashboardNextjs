@@ -4,7 +4,7 @@ const ProductSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
-    media: String,
+    media: [String],
     category: String,
     collections: [{ type: mongoose.Schema.Types.ObjectId, ref: "Collection" }],
     tags: [String],
