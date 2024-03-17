@@ -1,4 +1,5 @@
 import Collection from "@/lib/models/Collection";
+import Product from "@/lib/models/Product";
 import { connectToDB } from "@/lib/mongoDB";
 import { auth } from "@clerk/nextjs";
 import { NextRequest, NextResponse } from "next/server";
@@ -75,15 +76,24 @@ export const DELETE = async (
   try {
     const { userId } = auth();
 
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 403 });
+    }
+
     await connectToDB();
 
     await Collection.findByIdAndDelete(params.collectionId);
 
-    return new NextResponse("Collection is deleted", { status: 200 });
+    await Product.updateMany(
+      {
+        collections: params.collectionId,
+      },
+      {
+        $pull: { collections: params.collectionId },
+      }
+    );
 
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 403 });
-    }
+    return new NextResponse("Collection is deleted", { status: 200 });
   } catch (err) {
     console.log("[CollectionId_DELETE] Error", err);
     return new NextResponse("Internal Server Error", { status: 500 });
