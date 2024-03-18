@@ -30,7 +30,22 @@ export async function POST(req: NextRequest) {
         allowed_countries: ["IN", "US"],
       },
 
-      shipping_options: 
+      shipping_options: [
+        {
+          shipping_rate: "shr_1OvnlUSDAwtszM1ml0izRqBV",
+        },
+        {
+          shipping_rate: "shr_1OvnBcSDAwtszM1mRHiwkKyq",
+        },
+      ],
+      line_items: cartItems.map((cartItem: any) => ({
+        price_data: {
+          currency: "inr",
+          product_data: {
+            name: cartItem.item.title,
+          },
+        },
+      })),
     });
   } catch (err) {
     console.log("[Checkout_POST]", err);
