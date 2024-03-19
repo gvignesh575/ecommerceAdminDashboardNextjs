@@ -43,10 +43,22 @@ export async function POST(req: NextRequest) {
           currency: "inr",
           product_data: {
             name: cartItem.item.title,
+            metadata: {
+              productId: cartItem.item._id,
+              ...(cartItem.size && { size: cartItem.size }),
+              ...(cartItem.color && { color: cartItem.color }),
+            },
           },
+          unit_amount: cartItem.item.price * 100,
         },
+        quantity: cartItem.quantity,
       })),
+      client_reference_id: customer.clerkId,
+      success_url: `${process.env.ECOMMERCE_STORE_URL}/payment_success`,
+      cancel_url: `${process.env.ECOMMERCE_STORE_URL}/cart`,
     });
+
+    return NextResponse.json(session, { headers: corsHeaders });
   } catch (err) {
     console.log("[Checkout_POST]", err);
     return new NextResponse("Internal Server Error", { status: 500 });
