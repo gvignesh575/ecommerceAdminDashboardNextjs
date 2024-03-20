@@ -31,8 +31,7 @@ export const POST = async (req: NextRequest) => {
       };
 
       const shippingAddress = {
-        streetNumber: session?.shipping_details?.address?.line1,
-        streetName: session?.shipping_details?.address?.line2,
+        street: session?.shipping_details?.address?.line1,
         city: session?.shipping_details?.address?.city,
         state: session?.shipping_details?.address?.state,
         postalCode: session?.shipping_details?.address?.postal_code,
@@ -63,6 +62,7 @@ export const POST = async (req: NextRequest) => {
         customerClerkId: customerInfo.clerkId,
         products: orderItems,
         shippingAddress,
+        shippingRate: session?.shipping_cost?.shipping_rate,
         totalAmount: session.amount_total ? session.amount_total / 100 : 0,
       });
 
