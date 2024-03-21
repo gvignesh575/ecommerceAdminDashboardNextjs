@@ -78,22 +78,13 @@ export const POST = async (
       });
     }
 
-    console.log(collections);
-
     const addedCollections = collections.filter(
       (collectionId: string) => !product.collections.includes(collectionId)
     );
 
-    console.log(addedCollections);
-
-    // included in new data, but not included in the previous data
-
     const removedCollections = product.collections.filter(
       (collectionId: string) => !collections.includes(collectionId.toString())
     );
-
-    console.log(removedCollections);
-    // included in previous data, but not included in the new data
 
     // Update collections
     await Promise.all([
