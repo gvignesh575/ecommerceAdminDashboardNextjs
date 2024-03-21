@@ -45,3 +45,5 @@ const OrderDashboard = () => {
 };
 
 export default OrderDashboard;
+
+export const dynamic = "force-dynamic";
