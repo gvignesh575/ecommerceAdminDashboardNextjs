@@ -89,10 +89,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   };
 
   const handleItemClick = (id: string) => {
-    // Toggle selection
-
     onChange(id);
-    if (textInput.current) textInput.current.value = ""; // Check if textInput.current is not null
+    if (textInput.current) textInput.current.value = "";
     setOpen(false);
   };
 
