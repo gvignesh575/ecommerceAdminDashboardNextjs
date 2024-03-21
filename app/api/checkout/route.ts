@@ -23,20 +23,15 @@ export async function POST(req: NextRequest) {
       payment_method_types: ["card"],
       mode: "payment",
       shipping_address_collection: {
-        allowed_countries: ["US"],
+        allowed_countries: ["US", "CA"],
       },
-
       shipping_options: [
-        {
-          shipping_rate: "shr_1OvnlUSDAwtszM1ml0izRqBV",
-        },
-        {
-          shipping_rate: "shr_1OvnBcSDAwtszM1mRHiwkKyq",
-        },
+        { shipping_rate: "shr_1MfufhDgraNiyvtnDGef2uwK" },
+        { shipping_rate: "shr_1OpHFHDgraNiyvtnOY4vDjuY" },
       ],
       line_items: cartItems.map((cartItem: any) => ({
         price_data: {
-          currency: "usd",
+          currency: "cad",
           product_data: {
             name: cartItem.item.title,
             metadata: {
@@ -54,9 +49,9 @@ export async function POST(req: NextRequest) {
       cancel_url: `${process.env.ECOMMERCE_STORE_URL}/cart`,
     });
 
-    return new NextResponse(JSON.stringify(session), { headers: corsHeaders });
+    return NextResponse.json(session, { headers: corsHeaders });
   } catch (err) {
-    console.log("[Checkout_POST]", err);
+    console.log("[checkout_POST]", err);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
