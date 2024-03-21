@@ -21,7 +21,7 @@ const OrderDashboard = () => {
 
   useEffect(() => {
     getOrders();
-  });
+  }, []);
 
   return (
     <>
@@ -34,7 +34,9 @@ const OrderDashboard = () => {
           <div className="px-10 py-5">
             <p className="text-heading2-bold"> Orders</p>
             <Separator className="bg-grey-1 my-5" />
-            <DataTable columns={columns} data={orders} searchKey={"_id"} />
+            {orders && (
+              <DataTable columns={columns} data={orders} searchKey={"_id"} />
+            )}
           </div>
         </>
       )}
