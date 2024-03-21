@@ -2,22 +2,19 @@ import SalesChart from "@/components/custom ui/SalesChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-  getTotalSales,
-  getTotalCustomer,
   getSalesPerMonth,
+  getTotalCustomer,
+  getTotalSales,
 } from "@/lib/actions/action";
+import { UserButton } from "@clerk/nextjs";
 import { CircleDollarSign, ShoppingBag } from "lucide-react";
 
 export default async function Home() {
-  // Combine API calls and use Promise.all()
-  const [totalSalesData, totalCustomers, graphData] = await Promise.all([
-    getTotalSales(),
-    getTotalCustomer(),
-    getSalesPerMonth(),
-  ]);
+  const totalRevenue = await getTotalSales().then((data) => data.totalRevenue);
+  const totalOrders = await getTotalSales().then((data) => data.totalOrders);
+  const totalCustomers = await getTotalCustomer();
 
-  const totalRevenue = totalSalesData.totalRevenue;
-  const totalOrders = totalSalesData.totalOrders;
+  const graphData = await getSalesPerMonth();
 
   return (
     <div className="px-8 py-10">
