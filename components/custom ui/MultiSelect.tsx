@@ -12,7 +12,7 @@ interface MultiSelectProps {
   placeholder: string;
   collections: CollectionType[];
   value: string[]; // Assuming value is an array of selected _id values
-  onChange: (values: string[]) => void; // onChange function should accept an array of values
+  onChange: (values: string) => void; // onChange function should accept an array of values
   onRemove: (value: string) => void;
 }
 
@@ -27,9 +27,9 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   const [filteredCollections, setFilteredCollections] = useState<
     CollectionType[]
   >([]);
-  const multiSelectRef = useRef(null);
+  const multiSelectRef = useRef<HTMLDivElement>(null); // Provide explicit type
 
-  const textInput = useRef(null);
+  const textInput = useRef<HTMLInputElement>(null); // Provide explicit type
 
   let selected: CollectionType[];
 
@@ -64,7 +64,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     const handleClickOutside = (event: MouseEvent) => {
       if (
         multiSelectRef.current &&
-        !multiSelectRef.current.contains(event.target)
+        !multiSelectRef.current.contains(event.target as Node)
       ) {
         setOpen(false);
       }
@@ -92,7 +92,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     // Toggle selection
 
     onChange(id);
-    textInput.current.value = null;
+    if (textInput.current) textInput.current.value = ""; // Check if textInput.current is not null
     setOpen(false);
   };
 
@@ -104,8 +104,10 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     >
       <div className="flex gap-1 flex-wrap border rounded-md">
         {selected.map((collection) => (
-          <>
-            <Badge key={collection._id}>{collection.title}</Badge>
+          <React.Fragment key={collection._id}>
+            {" "}
+            {/* Changed to React.Fragment */}
+            <Badge>{collection.title}</Badge>
             <button
               type="button"
               className="ml-1 hover:text-red-1"
@@ -114,7 +116,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               <X className="h-3 w-3" />
               {""}
             </button>
-          </>
+          </React.Fragment>
         ))}
 
         <Input
